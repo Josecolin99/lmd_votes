@@ -1,0 +1,19 @@
+{% extends 'pages/base.html' %}
+{% block title %}Dragas — LMD Votes{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2 class="page-title">DRAGAS</h2>
+    <a href="{% url 'draga_form' %}" class="btn btn-primary">+ Nueva Draga</a>
+</div>
+
+<div class="draga-grid" id="draga-grid">
+    <div class="loading">Cargando dragas...</div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    loadDragas();
+</script>
+{% endblock %}

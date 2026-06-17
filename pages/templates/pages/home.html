@@ -1,0 +1,34 @@
+{% extends 'pages/base.html' %}
+{% block title %}LMD Votes — Home{% endblock %}
+
+{% block content %}
+<div class="hero">
+    <h1 class="hero-title">LA MÁS DRAGA</h1>
+    <p class="hero-sub">Tu sistema personal de calificación</p>
+    <div class="hero-actions">
+        <a href="{% url 'dragas' %}" class="btn btn-primary">Ver Dragas</a>
+        <a href="{% url 'chapters' %}" class="btn btn-secondary">Ver Capítulos</a>
+    </div>
+</div>
+
+<section class="stats-section">
+    <div class="stat-card" id="stat-dragas">
+        <span class="stat-number">—</span>
+        <span class="stat-label">Dragas registradas</span>
+    </div>
+    <div class="stat-card" id="stat-chapters">
+        <span class="stat-number">—</span>
+        <span class="stat-label">Capítulos</span>
+    </div>
+    <div class="stat-card" id="stat-calificaciones">
+        <span class="stat-number">—</span>
+        <span class="stat-label">Calificaciones</span>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    loadHomeStats();
+</script>
+{% endblock %}

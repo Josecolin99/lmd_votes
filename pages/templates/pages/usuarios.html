@@ -1,0 +1,19 @@
+{% extends 'pages/base.html' %}
+{% block title %}Usuarios — LMD Votes{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2 class="page-title">USUARIOS</h2>
+    <a href="{% url 'usuario_form' %}" class="btn btn-primary">+ Nuevo Usuario</a>
+</div>
+
+<div class="chapter-list" id="usuarios-list">
+    <div class="loading">Cargando usuarios...</div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    loadUsuarios();
+</script>
+{% endblock %}

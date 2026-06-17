@@ -1,0 +1,113 @@
+{% extends 'pages/base.html' %}
+{% block title %}Capítulo — LMD Votes{% endblock %}
+
+{% block content %}
+<div id="confetti-container"></div>
+
+<div class="chapter-detail">
+    <div class="cd-header">
+        <div class="cd-header-left">
+            <h2 class="page-title" id="chapter-title">Cargando...</h2>
+            <p class="chapter-meta" id="chapter-meta"></p>
+        </div>
+        <a href="{% url 'chapters' %}" class="btn btn-ghost">← Capítulos</a>
+    </div>
+
+    <!-- Barra de progreso -->
+    <div class="progress-wrap">
+        <div class="progress-bar-bg">
+            <div class="progress-bar-fill" id="progress-fill"></div>
+        </div>
+        <div class="progress-label" id="progress-label">0 / 0 dragas calificadas</div>
+    </div>
+
+    <!-- Flash de nuevo líder -->
+    <div class="leader-flash" id="leader-flash"></div>
+
+    <div class="detail-grid">
+        <!-- Panel de calificar -->
+        <section class="rating-section">
+            <h3 class="section-title">💄 CALIFICAR</h3>
+
+            <p class="picker-hint" id="picker-hint">✨ ¿A quién calificas hoy?</p>
+            <div class="draga-picker" id="draga-picker">
+                <div class="loading">Cargando dragas...</div>
+            </div>
+
+            <div class="picker-selected" id="picker-selected" style="display:none">
+                <img id="selected-img" src="" alt="">
+                <div class="picker-selected-info">
+                    <span id="selected-name"></span>
+                    <button class="picker-deselect" onclick="deseleccionarDraga()">✕ Cambiar</button>
+                </div>
+            </div>
+
+            <div id="slider-block" style="display:none">
+                <div class="touch-rating">
+                    <!-- Score display central -->
+                    <div class="touch-score-display">
+                        <div class="score-display" id="score-display">50</div>
+                        <div class="touch-score-label" id="touch-score-label">Chingona</div>
+                    </div>
+
+                    <!-- Zone markers -->
+                    <div class="zone-markers">
+                        <span>💀</span>
+                        <span>😬</span>
+                        <span>😐</span>
+                        <span>🔥</span>
+                        <span>👑</span>
+                    </div>
+
+                    <!-- Big touch bar -->
+                    <div class="touch-bar" id="touch-bar">
+                        <div class="touch-bar-fill" id="touch-bar-fill"></div>
+                        <div class="touch-thumb" id="touch-thumb">
+                            <span id="touch-thumb-emoji">🔥</span>
+                        </div>
+                    </div>
+
+                    <div class="touch-bar-limits">
+                        <span>0</span>
+                        <span id="range-max-label">100</span>
+                    </div>
+
+                    <!-- Competitive context -->
+                    <div class="score-zone" id="score-zone"></div>
+
+                    <!-- First rating badge -->
+                    <div class="first-badge" id="first-badge" style="display:none">
+                        ⚠️ Primera calificación — esta será la referencia base
+                    </div>
+                </div>
+
+                <div class="rating-actions">
+                    <button class="btn btn-extend" onclick="extendRange()">
+                        💫 Más rango (+100)
+                    </button>
+                    <button class="btn btn-primary btn-save-big" id="save-btn" onclick="saveCalificacion()">
+                        ¡CALIFICAR! ✨
+                    </button>
+                </div>
+            </div>
+
+            <div class="form-error" id="rating-error"></div>
+        </section>
+
+        <!-- Ranking en tiempo real -->
+        <section class="ranking-section">
+            <h3 class="section-title">🏆 RANKING EN VIVO</h3>
+            <div class="range-info" id="range-info"></div>
+            <div class="ranking-list" id="ranking-list">
+                <div class="loading">Cargando calificaciones...</div>
+            </div>
+        </section>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    initChapterDetail({{ chapter_id }});
+</script>
+{% endblock %}

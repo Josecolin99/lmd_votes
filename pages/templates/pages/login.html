@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login — LMD Votes</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'pages/style.css' %}">
+</head>
+<body class="login-body">
+    <div class="login-container">
+        <div class="login-brand">👑 LMD VOTES</div>
+        <p class="login-sub">Sistema de calificación</p>
+
+        <form method="post" class="glam-form">
+            {% csrf_token %}
+
+            {% if form.errors %}
+                <div class="form-error">Usuario o contraseña incorrectos.</div>
+            {% endif %}
+
+            <div class="form-group">
+                <label for="id_username">Usuario</label>
+                <input type="text" name="username" id="id_username" placeholder="tu_usuario" autofocus required>
+            </div>
+
+            <div class="form-group">
+                <label for="id_password">Contraseña</label>
+                <input type="password" name="password" id="id_password" placeholder="••••••••" required>
+            </div>
+
+            <input type="hidden" name="next" value="{{ next }}">
+
+            <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:0.5rem">
+                Entrar ✨
+            </button>
+        </form>
+    </div>
+</body>
+</html>

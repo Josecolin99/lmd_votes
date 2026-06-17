@@ -12,12 +12,14 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Draga',
+            name='Chapter',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=100)),
-                ('image_url', models.URLField()),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
+                ('number', models.PositiveSmallIntegerField()),
+                ('name', models.CharField(blank=True, max_length=100)),
             ],
+            options={
+                'ordering': ['number'],
+            },
         ),
     ]

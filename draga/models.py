@@ -1,8 +1,10 @@
-from django.db import models as m
+from django.db import models
 
-# Create your models here.
 
-class Feminosa(m.Model):
-    name  = m.CharField(max_length=100)
-    image = m.URLField()
-    
+class Draga(models.Model):
+    name = models.CharField(max_length=100)
+    image_url = models.URLField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
