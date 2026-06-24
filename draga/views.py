@@ -5,6 +5,12 @@ from .serializers import DragaSerializer
 
 
 class DragaViewSet(viewsets.ModelViewSet):
-    queryset = Draga.objects.all().order_by('name')
-    serializer_class = DragaSerializer
+    serializer_class   = DragaSerializer
     permission_classes = [IsAdminOrReadOnly]
+
+    def get_queryset(self):
+        qs = Draga.objects.all().order_by('name')
+        t = self.request.query_params.get('temporada')
+        if t:
+            qs = qs.filter(temporada_id=t)
+        return qs

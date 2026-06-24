@@ -18,7 +18,7 @@
         <div class="form-error" id="form-error"></div>
         <div class="form-actions">
             <button type="submit" class="btn btn-primary">Guardar Draga ✨</button>
-            <a href="{% url 'dragas' %}" class="btn btn-ghost">Cancelar</a>
+            <a href="{% url 'temporada_detail' temporada_id %}" class="btn btn-ghost">Cancelar</a>
         </div>
     </form>
 </div>
@@ -26,6 +26,6 @@
 
 {% block extra_js %}
 <script>
-    initDragaForm();
+    initDragaForm({{ temporada_id }});
 </script>
 {% endblock %}

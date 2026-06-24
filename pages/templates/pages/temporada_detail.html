@@ -1,0 +1,46 @@
+{% extends 'pages/base.html' %}
+{% block title %}Temporada — LMD Votes{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h2 class="page-title" id="temporada-title">Temporada {{ temporada_id }}</h2>
+        <p class="chapter-meta" id="temporada-subtitle"></p>
+    </div>
+    <a href="{% url 'temporadas' %}" class="btn btn-ghost">← Temporadas</a>
+</div>
+
+<div class="temporada-detail-grid">
+    <!-- Dragas section -->
+    <section class="td-section">
+        <div class="td-section-header">
+            <h3 class="section-title">💄 DRAGAS</h3>
+            {% if request.user.is_staff %}
+                <a href="{% url 'draga_form' temporada_id %}" class="btn btn-sm btn-primary">+ Draga</a>
+            {% endif %}
+        </div>
+        <div class="draga-picker" id="temporada-draga-grid">
+            <div class="loading">Cargando dragas...</div>
+        </div>
+    </section>
+
+    <!-- Chapters section -->
+    <section class="td-section">
+        <div class="td-section-header">
+            <h3 class="section-title">🎬 CAPÍTULOS</h3>
+            {% if request.user.is_staff %}
+                <a href="{% url 'chapter_form' temporada_id %}" class="btn btn-sm btn-primary">+ Capítulo</a>
+            {% endif %}
+        </div>
+        <div id="temporada-chapter-list">
+            <div class="loading">Cargando capítulos...</div>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    initTemporadaDetail({{ temporada_id }});
+</script>
+{% endblock %}

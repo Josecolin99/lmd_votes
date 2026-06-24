@@ -17,7 +17,7 @@
         <div class="form-error" id="form-error"></div>
         <div class="form-actions">
             <button type="submit" class="btn btn-primary">Guardar Capítulo 🎬</button>
-            <a href="{% url 'chapters' %}" class="btn btn-ghost">Cancelar</a>
+            <a href="{% url 'temporada_detail' temporada_id %}" class="btn btn-ghost">Cancelar</a>
         </div>
     </form>
 </div>
@@ -25,6 +25,6 @@
 
 {% block extra_js %}
 <script>
-    initChapterForm();
+    initChapterForm({{ temporada_id }});
 </script>
 {% endblock %}

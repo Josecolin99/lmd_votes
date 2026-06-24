@@ -10,7 +10,7 @@
             <h2 class="page-title" id="chapter-title">Cargando...</h2>
             <p class="chapter-meta" id="chapter-meta"></p>
         </div>
-        <a href="{% url 'chapters' %}" class="btn btn-ghost">← Capítulos</a>
+        <a href="{% url 'temporada_detail' temporada_id %}" class="btn btn-ghost">← Temporada</a>
     </div>
 
     <!-- Barra de progreso -->
@@ -108,6 +108,6 @@
 
 {% block extra_js %}
 <script>
-    initChapterDetail({{ chapter_id }});
+    initChapterDetail({{ chapter_id }}, {{ temporada_id }});
 </script>
 {% endblock %}

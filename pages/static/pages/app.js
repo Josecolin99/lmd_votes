@@ -49,49 +49,110 @@ function showConfirm({ icon = '⚠️', title = '¿Estás segura?', message = ''
     });
 }
 
-/* ===== HOME STATS ===== */
-async function loadHomeStats() {
+/* ===== TEMPORADAS LIST ===== */
+async function loadTemporadas() {
+    const grid = document.getElementById('temporada-grid');
+    if (!grid) return;
+    try {
+        const temporadas = await get('/temporadas/');
+        if (!temporadas.length) {
+            grid.innerHTML = `
+                <div class="empty-state" style="grid-column:1/-1">
+                    <span class="empty-icon">🎭</span>
+                    <p>No hay temporadas registradas aún.</p>
+                </div>`;
+            return;
+        }
+        grid.innerHTML = temporadas.map(t => `
+            <a class="temporada-card" href="/temporadas/${t.id}/">
+                ${t.image_url ? `<img src="${t.image_url}" alt="${t.name}" onerror="this.style.display='none'">` : '<div class="temporada-card-placeholder">🎭</div>'}
+                <div class="temporada-card-body">
+                    <div class="temporada-card-number">T${String(t.number).padStart(2,'0')}</div>
+                    <div class="temporada-card-name">${t.name || 'Sin título'}</div>
+                </div>
+            </a>
+        `).join('');
+    } catch (e) {
+        grid.innerHTML = '<div class="loading">Error al cargar temporadas.</div>';
+    }
+}
+
+/* ===== TEMPORADA FORM ===== */
+function initTemporadaForm() {
+    const imgInput = document.getElementById('temporada-image');
+    const preview  = document.getElementById('image-preview');
+
+    if (imgInput) {
+        imgInput.addEventListener('input', () => {
+            const url = imgInput.value.trim();
+            preview.innerHTML = url
+                ? `<img src="${url}" alt="preview" onerror="this.style.display='none'">`
+                : '';
+        });
+    }
+
+    document.getElementById('temporada-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const errEl = document.getElementById('form-error');
+        errEl.textContent = '';
+        try {
+            await post('/temporadas/', {
+                number:    parseInt(document.getElementById('temporada-number').value),
+                name:      document.getElementById('temporada-name').value.trim(),
+                image_url: (imgInput?.value || '').trim(),
+            });
+            window.location.href = '/temporadas/';
+        } catch (err) {
+            errEl.textContent = Object.values(err).flat().join(' ');
+        }
+    });
+}
+
+/* ===== TEMPORADA DETAIL ===== */
+async function initTemporadaDetail(t_id) {
+    const dragaGrid   = document.getElementById('temporada-draga-grid');
+    const chapterList = document.getElementById('temporada-chapter-list');
     try {
         const [dragas, chapters, cals] = await Promise.all([
-            get('/dragas/'),
-            get('/chapters/'),
+            get(`/dragas/?temporada=${t_id}`),
+            get(`/chapters/?temporada=${t_id}`),
             get('/calificaciones/'),
         ]);
-        document.querySelector('#stat-dragas .stat-number').textContent = dragas.length;
-        document.querySelector('#stat-chapters .stat-number').textContent = chapters.length;
-        document.querySelector('#stat-calificaciones .stat-number').textContent = cals.length;
+
+        // Dragas
+        if (!dragas.length) {
+            dragaGrid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><span class="empty-icon">💄</span><p>No hay dragas en esta temporada.</p></div>`;
+        } else {
+            dragaGrid.innerHTML = dragas.map(d => `
+                <div class="draga-card">
+                    <img src="${d.image_url}" alt="${d.name}" onerror="this.src='https://placehold.co/400x530/1e1e1e/888?text=Sin+imagen'">
+                    <div class="draga-card-name">${d.name}</div>
+                </div>
+            `).join('');
+        }
+
+        // Chapters
+        const countMap = {};
+        cals.forEach(c => { countMap[c.chapter] = (countMap[c.chapter] || 0) + 1; });
+
+        if (!chapters.length) {
+            chapterList.innerHTML = `<div class="empty-state"><span class="empty-icon">🎬</span><p>No hay capítulos en esta temporada.</p></div>`;
+        } else {
+            chapterList.innerHTML = chapters.map(ch => `
+                <a class="chapter-item" href="/temporadas/${t_id}/chapters/${ch.id}/">
+                    <span class="chapter-number">${String(ch.number).padStart(2,'0')}</span>
+                    <span class="chapter-name">${ch.name || 'Sin título'}</span>
+                    <span class="chapter-count">${countMap[ch.id] || 0} cals.</span>
+                </a>
+            `).join('');
+        }
     } catch (e) {
         console.error(e);
     }
 }
 
-/* ===== DRAGAS LIST ===== */
-async function loadDragas() {
-    const grid = document.getElementById('draga-grid');
-    try {
-        const dragas = await get('/dragas/');
-        if (!dragas.length) {
-            grid.innerHTML = `
-                <div class="empty-state" style="grid-column:1/-1">
-                    <span class="empty-icon">💄</span>
-                    <p>No hay dragas registradas aún.</p>
-                    <a href="/dragas/nueva/" class="btn btn-primary" style="margin-top:1rem">+ Agregar primera draga</a>
-                </div>`;
-            return;
-        }
-        grid.innerHTML = dragas.map(d => `
-            <div class="draga-card">
-                <img src="${d.image_url}" alt="${d.name}" onerror="this.src='https://placehold.co/400x530/1e1e1e/888?text=Sin+imagen'">
-                <div class="draga-card-name">${d.name}</div>
-            </div>
-        `).join('');
-    } catch (e) {
-        grid.innerHTML = '<div class="loading">Error al cargar dragas.</div>';
-    }
-}
-
 /* ===== DRAGA FORM ===== */
-function initDragaForm() {
+function initDragaForm(t_id) {
     const imgInput = document.getElementById('draga-image');
     const preview  = document.getElementById('image-preview');
 
@@ -108,59 +169,30 @@ function initDragaForm() {
         errEl.textContent = '';
         try {
             await post('/dragas/', {
-                name: document.getElementById('draga-name').value.trim(),
+                temporada: t_id,
+                name:      document.getElementById('draga-name').value.trim(),
                 image_url: document.getElementById('draga-image').value.trim(),
             });
-            window.location.href = '/dragas/';
+            window.location.href = `/temporadas/${t_id}/`;
         } catch (err) {
             errEl.textContent = Object.values(err).flat().join(' ');
         }
     });
 }
 
-/* ===== CHAPTERS LIST ===== */
-async function loadChapters() {
-    const list = document.getElementById('chapter-list');
-    try {
-        const chapters = await get('/chapters/');
-        if (!chapters.length) {
-            list.innerHTML = `
-                <div class="empty-state">
-                    <span class="empty-icon">🎬</span>
-                    <p>No hay capítulos registrados aún.</p>
-                    <a href="/chapters/nuevo/" class="btn btn-primary" style="margin-top:1rem">+ Agregar primer capítulo</a>
-                </div>`;
-            return;
-        }
-        // Fetch cal counts per chapter
-        const cals = await get('/calificaciones/');
-        const countMap = {};
-        cals.forEach(c => { countMap[c.chapter] = (countMap[c.chapter] || 0) + 1; });
-
-        list.innerHTML = chapters.map(ch => `
-            <a class="chapter-item" href="/chapters/${ch.id}/">
-                <span class="chapter-number">${String(ch.number).padStart(2,'0')}</span>
-                <span class="chapter-name">${ch.name || 'Sin título'}</span>
-                <span class="chapter-count">${countMap[ch.id] || 0} calificaciones</span>
-            </a>
-        `).join('');
-    } catch (e) {
-        list.innerHTML = '<div class="loading">Error al cargar capítulos.</div>';
-    }
-}
-
 /* ===== CHAPTER FORM ===== */
-function initChapterForm() {
+function initChapterForm(t_id) {
     document.getElementById('chapter-form').addEventListener('submit', async (e) => {
         e.preventDefault();
         const errEl = document.getElementById('form-error');
         errEl.textContent = '';
         try {
             await post('/chapters/', {
-                number: parseInt(document.getElementById('chapter-number').value),
-                name:   document.getElementById('chapter-name').value.trim(),
+                temporada: t_id,
+                number:    parseInt(document.getElementById('chapter-number').value),
+                name:      document.getElementById('chapter-name').value.trim(),
             });
-            window.location.href = '/chapters/';
+            window.location.href = `/temporadas/${t_id}/`;
         } catch (err) {
             errEl.textContent = Object.values(err).flat().join(' ');
         }
@@ -190,11 +222,11 @@ function getZone(pct) {
     return ZONES.find(z => pct <= z.max) || ZONES[ZONES.length - 1];
 }
 
-async function initChapterDetail(chapterId) {
+async function initChapterDetail(chapterId, temporadaId) {
     try {
         [chapterData, dragasAll, calsInChapter] = await Promise.all([
             get(`/chapters/${chapterId}/`),
-            get('/dragas/'),
+            get(`/dragas/?temporada=${temporadaId}`),
             get(`/calificaciones/?chapter=${chapterId}`),
         ]);
     } catch (e) {

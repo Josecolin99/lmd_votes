@@ -5,6 +5,12 @@ from .serializers import ChapterSerializer
 
 
 class ChapterViewSet(viewsets.ModelViewSet):
-    queryset = Chapter.objects.all()
-    serializer_class = ChapterSerializer
+    serializer_class   = ChapterSerializer
     permission_classes = [IsAdminOrReadOnly]
+
+    def get_queryset(self):
+        qs = Chapter.objects.all()
+        t = self.request.query_params.get('temporada')
+        if t:
+            qs = qs.filter(temporada_id=t)
+        return qs

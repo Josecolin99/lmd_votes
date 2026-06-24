@@ -21,20 +21,42 @@ class HomeView(LoginRequiredMixin, TemplateView):
     template_name = 'pages/home.html'
 
 
-class DragasView(LoginRequiredMixin, TemplateView):
-    template_name = 'pages/dragas.html'
+# ── Temporadas ────────────────────────────────────────────────
+class TemporadasView(LoginRequiredMixin, TemplateView):
+    template_name = 'pages/temporadas.html'
 
 
+class TemporadaFormView(AdminRequiredMixin, TemplateView):
+    template_name = 'pages/temporada_form.html'
+
+
+class TemporadaDetailView(LoginRequiredMixin, TemplateView):
+    template_name = 'pages/temporada_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['temporada_id'] = self.kwargs['t_id']
+        return context
+
+
+# ── Dragas (scoped) ───────────────────────────────────────────
 class DragaFormView(AdminRequiredMixin, TemplateView):
     template_name = 'pages/draga_form.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['temporada_id'] = self.kwargs['t_id']
+        return context
 
-class ChaptersView(LoginRequiredMixin, TemplateView):
-    template_name = 'pages/chapters.html'
 
-
+# ── Chapters (scoped) ─────────────────────────────────────────
 class ChapterFormView(AdminRequiredMixin, TemplateView):
     template_name = 'pages/chapter_form.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['temporada_id'] = self.kwargs['t_id']
+        return context
 
 
 class ChapterDetailView(LoginRequiredMixin, TemplateView):
@@ -42,7 +64,8 @@ class ChapterDetailView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['chapter_id'] = self.kwargs['chapter_id']
+        context['temporada_id'] = self.kwargs['t_id']
+        context['chapter_id']   = self.kwargs['c_id']
         return context
 
 
