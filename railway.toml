@@ -1,0 +1,8 @@
+[build]
+builder = "nixpacks"
+
+[deploy]
+startCommand = "python manage.py migrate && python manage.py collectstatic --noinput && gunicorn core.wsgi --log-file -"
+healthcheckPath = "/login/"
+healthcheckTimeout = 30
+restartPolicyType = "on_failure"
